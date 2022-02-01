@@ -1,4 +1,5 @@
 import HeaderBar from "../components/HeaderBar";
+import SinglePageDashboard from "../components/SinglePageDashbaord";
 import { RouteInfo } from "../index";
 
 type SinglePageProps = {
@@ -9,7 +10,7 @@ function SinglePage(props: SinglePageProps) {
   return (
     <>
       <HeaderBar routes={props.routes} />
-      <div>Hello World</div>
+      <SinglePageDashboard />
     </>
   );
 }

@@ -7,9 +7,10 @@ type HomeProps = {
 
 function Home(props: HomeProps) {
   return (
-    <HeaderBar
-      routes={props.routes}
-    />
+    <>
+      <HeaderBar routes={props.routes} />
+      <div>This is the homepage</div>
+    </>
   );
 }
 
