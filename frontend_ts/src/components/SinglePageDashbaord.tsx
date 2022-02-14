@@ -2,16 +2,18 @@ import { useState } from "react";
 
 import Modal from "react-bootstrap/Modal";
 import Container from "react-bootstrap/Container";
-import Stack from "react-bootstrap/Stack";
+
+import { KonvaEventObject } from "konva/lib/Node";
 
 import ImageCanvas from "./ImageCanvas";
 import DocumentUploadForm from "./DocumentUploadForm";
 import DocumentStatus from "./DocumentStatus";
+import AnnotationList from "./AnnotationList";
 import {
   TextDetectionResponseData,
   BoundingBox,
 } from "../models/textDetection";
-import { KonvaEventObject } from "konva/lib/Node";
+import { Col, Row } from "react-bootstrap";
 
 function SinglePageDashboard() {
   const [isLoading, setIsLoading] = useState(false);
@@ -27,6 +29,8 @@ function SinglePageDashboard() {
     TextDetectionResponseData | undefined
   >(undefined);
   const [boundingBoxes, setBoundingBoxes] = useState<BoundingBox[]>([]);
+
+  const [ocrServiceResponse, setOcrServiceResponse] = useState<string[]>([]);
 
   const handleCloseModal = () => {
     setShowModal(false);
@@ -102,6 +106,40 @@ function SinglePageDashboard() {
     }
   };
 
+  const sendToOCRHandler = async () => {
+    setIsLoading(true);
+
+    try {
+      const ocrServiceURL = `http://${process.env.REACT_APP_OCR_SERVICE_URL}/ocr`;
+
+      const formData = new FormData();
+      formData.append("file", imageFile);
+      formData.append("boxes", JSON.stringify(boundingBoxes));
+
+      const response = await fetch(ocrServiceURL, {
+        method: "POST",
+        body: formData,
+        headers: {
+          mode: "no-cors",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`the http request returned:${response.status}`);
+      }
+
+      const data = await response.json();
+      setOcrServiceResponse(data.predictions);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err);
+        setShowModal(true);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <>
       <Modal show={showModal} onHide={handleCloseModal}>
@@ -118,18 +156,31 @@ function SinglePageDashboard() {
             imageName={imageFileName}
             isLoading={isLoading}
             onSegmentationClick={startSegmentationHandler}
+            onSendToOcrClick={sendToOCRHandler}
             segmentationData={boundingBoxes}
           />
         )}
       </Container>
       {isImageLoaded && (
-        <Stack direction="horizontal">
-          <ImageCanvas
-            imageSrc={imageFileData}
-            boundingBoxes={boundingBoxes}
-            dragEndHandler={dragEndHandler}
-          />
-        </Stack>
+        <Container>
+          <Row>
+            <Col>
+              <ImageCanvas
+                imageSrc={imageFileData}
+                boundingBoxes={boundingBoxes}
+                dragEndHandler={dragEndHandler}
+              />
+            </Col>
+            <Col>
+              {ocrServiceResponse.length === 0 && (
+                <p>Click "send to OCR" to start the prediction</p>
+              )}
+              {ocrServiceResponse.length > 0 && (
+                <AnnotationList annotations={ocrServiceResponse} />
+              )}
+            </Col>
+          </Row>
+        </Container>
       )}
     </>
   );
