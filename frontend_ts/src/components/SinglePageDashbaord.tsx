@@ -85,6 +85,7 @@ function SinglePageDashboard() {
         </Modal.Header>
         <Modal.Body>{error?.message}</Modal.Body>
       </Modal>
+
       <Container fluid className="p-3 bg-secondary text-white">
         {!isImageLoaded && <DocumentUploadForm onUpload={imageUploadHandler} />}
         {isImageLoaded && (
@@ -92,16 +93,16 @@ function SinglePageDashboard() {
             imageName={imageFileName}
             isLoading={isLoading}
             onSegmentationClick={startSegmentationHandler}
+            segmentationData={textDetectionResponse}
           />
         )}
       </Container>
       {isImageLoaded && (
         <Stack direction="horizontal">
-          <ImageCanvas imageSrc={imageFileData} />
-
-          {textDetectionResponse && (
-            <div>{JSON.stringify(textDetectionResponse)}</div>
-          )}
+          <ImageCanvas
+            imageSrc={imageFileData}
+            boundingBoxesData={textDetectionResponse}
+          />
         </Stack>
       )}
     </>
