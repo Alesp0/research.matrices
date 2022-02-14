@@ -2,23 +2,20 @@ import Container from "react-bootstrap/Container";
 import Stack from "react-bootstrap/Stack";
 import Button from "react-bootstrap/Button";
 
-import {
-  TextDetectionResponseData,
-  BoundingBox,
-} from "../models/textDetection";
+import { BoundingBox } from "../models/textDetection";
 
 type DocumentStatusProps = {
   imageName: string;
   isLoading: boolean;
   onSegmentationClick: () => void;
-  segmentationData?: TextDetectionResponseData;
+  segmentationData?: BoundingBox[];
 };
 
 function DocumentStatus(props: DocumentStatusProps) {
   let boxes: BoundingBox[] = [];
   let boxesInfo = <></>;
   if (props.segmentationData) {
-    boxes = props.segmentationData.boundingBoxes;
+    boxes = props.segmentationData;
     boxesInfo = <div>{`segments:${boxes.length}`}</div>;
   }
 

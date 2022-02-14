@@ -1,35 +1,30 @@
-import { Stage, Layer, Rect, Image, Group } from "react-konva";
+import { Stage, Layer, Image, Group } from "react-konva";
+import { KonvaEventObject } from "konva/lib/Node";
 import useImage from "use-image";
 
-import {
-  TextDetectionResponseData,
-  BoundingBox,
-} from "../models/textDetection";
+import { BoundingBox } from "../models/textDetection";
+import BoxElement from "./BoxElement";
 
 type ImageCanvasProps = {
   imageSrc: string;
-  boundingBoxesData?: TextDetectionResponseData;
+  boundingBoxes?: BoundingBox[];
+  dragEndHandler: (event: KonvaEventObject<DragEvent>) => void;
 };
 
 function ImageCanvas(props: ImageCanvasProps) {
   const [image] = useImage(props.imageSrc);
   let boxes: BoundingBox[] = [];
-
-  if (props.boundingBoxesData) {
-    boxes = props.boundingBoxesData.boundingBoxes;
+  if (props.boundingBoxes) {
+    boxes = props.boundingBoxes;
   }
 
-  const boxElements = boxes.map((box) => {
+  const boxElems = boxes.map((box) => {
     return (
-      <Rect
+      <BoxElement
         key={box.id}
-        x={box.x}
-        y={box.y}
-        width={box.width}
-        height={box.height}
-        stroke="blue"
-        strokeWidth={3}
-        draggable={true}
+        box={box}
+        dragEndHandler={props.dragEndHandler}
+        strokeColor="blue"
       />
     );
   });
@@ -38,7 +33,7 @@ function ImageCanvas(props: ImageCanvasProps) {
     <Stage width={window.innerWidth} height={window.innerHeight}>
       <Layer>
         <Image image={image} />
-        <Group>{boxElements}</Group>
+        <Group>{boxElems}</Group>
       </Layer>
     </Stage>
   );

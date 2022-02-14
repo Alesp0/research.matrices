@@ -7,7 +7,11 @@ import Stack from "react-bootstrap/Stack";
 import ImageCanvas from "./ImageCanvas";
 import DocumentUploadForm from "./DocumentUploadForm";
 import DocumentStatus from "./DocumentStatus";
-import { TextDetectionResponseData } from "../models/textDetection";
+import {
+  TextDetectionResponseData,
+  BoundingBox,
+} from "../models/textDetection";
+import { KonvaEventObject } from "konva/lib/Node";
 
 function SinglePageDashboard() {
   const [isLoading, setIsLoading] = useState(false);
@@ -22,9 +26,29 @@ function SinglePageDashboard() {
   const [textDetectionResponse, setTextDetectionResponde] = useState<
     TextDetectionResponseData | undefined
   >(undefined);
+  const [boundingBoxes, setBoundingBoxes] = useState<BoundingBox[]>([]);
 
   const handleCloseModal = () => {
     setShowModal(false);
+  };
+
+  const dragEndHandler = (e: KonvaEventObject<DragEvent>) => {
+    setBoundingBoxes((previousState) => {
+      const newState = [...previousState].map((box) => {
+        if (box.id === e.target.id()) {
+          return new BoundingBox(
+            box.id,
+            box.height,
+            box.width,
+            e.target.x(),
+            e.target.y()
+          );
+        } else {
+          return box;
+        }
+      });
+      return newState;
+    });
   };
 
   const imageUploadHandler = (event: any) => {
@@ -64,6 +88,7 @@ function SinglePageDashboard() {
       const boxesData = TextDetectionResponseData.fromJson(data);
       if (boxesData) {
         setTextDetectionResponde(boxesData);
+        setBoundingBoxes(boxesData.boundingBoxes);
       } else {
         throw new Error("The Response data follows an unexpected schema");
       }
@@ -93,7 +118,7 @@ function SinglePageDashboard() {
             imageName={imageFileName}
             isLoading={isLoading}
             onSegmentationClick={startSegmentationHandler}
-            segmentationData={textDetectionResponse}
+            segmentationData={boundingBoxes}
           />
         )}
       </Container>
@@ -101,7 +126,8 @@ function SinglePageDashboard() {
         <Stack direction="horizontal">
           <ImageCanvas
             imageSrc={imageFileData}
-            boundingBoxesData={textDetectionResponse}
+            boundingBoxes={boundingBoxes}
+            dragEndHandler={dragEndHandler}
           />
         </Stack>
       )}
