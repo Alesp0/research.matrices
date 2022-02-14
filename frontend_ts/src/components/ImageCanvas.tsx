@@ -1,4 +1,4 @@
-import { Stage, Layer, Rect, Image } from "react-konva";
+import { Stage, Layer, Rect, Image, Group } from "react-konva";
 import useImage from "use-image";
 
 import {
@@ -21,17 +21,16 @@ function ImageCanvas(props: ImageCanvasProps) {
 
   const boxElements = boxes.map((box) => {
     return (
-      <li key={box.id}>
-        <Rect
-          x={box.x}
-          y={box.y}
-          width={box.width}
-          height={box.height}
-          stroke="blue"
-          strokeWidth={3}
-          draggable={true}
-        />
-      </li>
+      <Rect
+        key={box.id}
+        x={box.x}
+        y={box.y}
+        width={box.width}
+        height={box.height}
+        stroke="blue"
+        strokeWidth={3}
+        draggable={true}
+      />
     );
   });
 
@@ -39,7 +38,7 @@ function ImageCanvas(props: ImageCanvasProps) {
     <Stage width={window.innerWidth} height={window.innerHeight}>
       <Layer>
         <Image image={image} />
-        <ol>{boxElements}</ol>
+        <Group>{boxElements}</Group>
       </Layer>
     </Stage>
   );
