@@ -3,8 +3,8 @@ import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Container from "react-bootstrap/Container";
 import Stack from "react-bootstrap/Stack";
-import Image from "react-bootstrap/Image";
 
+import ImageCanvas from "./ImageCanvas";
 import DocumentUploadForm from "./DocumentUploadForm";
 import DocumentStatus from "./DocumentStatus";
 import { TextDetectionResponseData } from "../models/textDetection";
@@ -97,7 +97,8 @@ function SinglePageDashboard() {
       </Container>
       {isImageLoaded && (
         <Stack direction="horizontal">
-          <Image fluid src={imageFileData} />
+          <ImageCanvas imageSrc={imageFileData} />
+
           {textDetectionResponse && (
             <div>{JSON.stringify(textDetectionResponse)}</div>
           )}
