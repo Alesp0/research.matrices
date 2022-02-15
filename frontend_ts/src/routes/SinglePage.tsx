@@ -1,3 +1,4 @@
+import { Container, Row } from "react-bootstrap";
 import HeaderBar from "../components/HeaderBar";
 import SinglePageDashboard from "../components/SinglePageDashbaord";
 import { RouteInfo } from "../index";
@@ -8,10 +9,14 @@ type SinglePageProps = {
 
 function SinglePage(props: SinglePageProps) {
   return (
-    <>
-      <HeaderBar routes={props.routes} />
-      <SinglePageDashboard />
-    </>
+    <Container fluid>
+      <Row>
+        <HeaderBar routes={props.routes} />
+      </Row>
+      <Row>
+        <SinglePageDashboard />
+      </Row>
+    </Container>
   );
 }
 

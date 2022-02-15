@@ -21,13 +21,18 @@ function SinglePageDashboard() {
   const [showModal, setShowModal] = useState(false);
 
   const [isImageLoaded, setIsImageLoaded] = useState(false);
-  const [imageFileData, setImageFileData] = useState("");
-  const [imageFileName, setImageFileName] = useState("");
   const [imageFile, setImageFile] = useState(new Blob());
+  const [imageElem, setImageElem] = useState(new Image());
+  const [imageFileInfo, setImageFileInfo] = useState<{
+    name: string;
+    width: number;
+    height: number;
+  }>({
+    name: "",
+    width: 0,
+    height: 0,
+  });
 
-  const [textDetectionResponse, setTextDetectionResponde] = useState<
-    TextDetectionResponseData | undefined
-  >(undefined);
   const [boundingBoxes, setBoundingBoxes] = useState<BoundingBox[]>([]);
 
   const [ocrServiceResponse, setOcrServiceResponse] = useState<string[]>([]);
@@ -62,10 +67,17 @@ function SinglePageDashboard() {
     const reader = new FileReader();
     reader.onloadend = (ev) => {
       if (ev.target?.result) {
+        const img = new Image();
+        img.src = ev.target.result.toString();
         setIsImageLoaded(true);
-        setImageFileName(file.name);
-        setImageFileData(ev.target.result.toString());
+
+        setImageElem(img);
         setImageFile(file);
+        setImageFileInfo({
+          name: file.name,
+          width: img.naturalWidth,
+          height: img.naturalHeight,
+        });
       }
     };
     reader.readAsDataURL(file);
@@ -91,7 +103,6 @@ function SinglePageDashboard() {
       const data = await response.json();
       const boxesData = TextDetectionResponseData.fromJson(data);
       if (boxesData) {
-        setTextDetectionResponde(boxesData);
         setBoundingBoxes(boxesData.boundingBoxes);
       } else {
         throw new Error("The Response data follows an unexpected schema");
@@ -149,24 +160,28 @@ function SinglePageDashboard() {
         <Modal.Body>{error?.message}</Modal.Body>
       </Modal>
 
-      <Container fluid className="p-3 bg-secondary text-white">
-        {!isImageLoaded && <DocumentUploadForm onUpload={imageUploadHandler} />}
+      <Container fluid>
+        <Row className="p-3 bg-secondary text-white">
+          {!isImageLoaded && (
+            <DocumentUploadForm onUpload={imageUploadHandler} />
+          )}
+          {isImageLoaded && (
+            <DocumentStatus
+              imageName={imageFileInfo.name}
+              isLoading={isLoading}
+              onSegmentationClick={startSegmentationHandler}
+              onSendToOcrClick={sendToOCRHandler}
+              segmentationData={boundingBoxes}
+            />
+          )}
+        </Row>
         {isImageLoaded && (
-          <DocumentStatus
-            imageName={imageFileName}
-            isLoading={isLoading}
-            onSegmentationClick={startSegmentationHandler}
-            onSendToOcrClick={sendToOCRHandler}
-            segmentationData={boundingBoxes}
-          />
-        )}
-      </Container>
-      {isImageLoaded && (
-        <Container>
-          <Row>
+          <Row className="bg-primary">
             <Col>
               <ImageCanvas
-                imageSrc={imageFileData}
+                imageSrc={imageElem}
+                imageWidth={imageFileInfo.width}
+                imageHeight={imageFileInfo.height}
                 boundingBoxes={boundingBoxes}
                 dragEndHandler={dragEndHandler}
               />
@@ -176,12 +191,15 @@ function SinglePageDashboard() {
                 <p>Click "send to OCR" to start the prediction</p>
               )}
               {ocrServiceResponse.length > 0 && (
-                <AnnotationList annotations={ocrServiceResponse} />
+                <AnnotationList
+                  annotations={ocrServiceResponse}
+                  listMaxheight={imageFileInfo.height}
+                />
               )}
             </Col>
           </Row>
-        </Container>
-      )}
+        )}
+      </Container>
     </>
   );
 }

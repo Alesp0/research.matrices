@@ -1,18 +1,18 @@
 import { Stage, Layer, Image, Group } from "react-konva";
 import { KonvaEventObject } from "konva/lib/Node";
-import useImage from "use-image";
 
 import { BoundingBox } from "../models/textDetection";
 import BoxElement from "./BoxElement";
 
 type ImageCanvasProps = {
-  imageSrc: string;
+  imageSrc: HTMLImageElement;
+  imageWidth: number;
+  imageHeight: number;
   boundingBoxes?: BoundingBox[];
   dragEndHandler: (event: KonvaEventObject<DragEvent>) => void;
 };
 
 function ImageCanvas(props: ImageCanvasProps) {
-  const [image] = useImage(props.imageSrc);
   let boxes: BoundingBox[] = [];
   if (props.boundingBoxes) {
     boxes = props.boundingBoxes;
@@ -24,15 +24,15 @@ function ImageCanvas(props: ImageCanvasProps) {
         key={box.id}
         box={box}
         dragEndHandler={props.dragEndHandler}
-        strokeColor="blue"
+        strokeColor="#dd00ff"
       />
     );
   });
 
   return (
-    <Stage width={window.innerWidth} height={window.innerHeight}>
+    <Stage width={props.imageWidth} height={props.imageHeight}>
       <Layer>
-        <Image image={image} />
+        <Image image={props.imageSrc} />
         <Group>{boxElems}</Group>
       </Layer>
     </Stage>
