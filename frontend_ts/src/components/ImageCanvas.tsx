@@ -10,7 +10,7 @@ type ImageCanvasProps = {
   imageWidth: number;
   imageHeight: number;
   boundingBoxes?: BoundingBox[];
-  setBoundingBoxes: (boxes: BoundingBox[]) => void;
+  setBoundingBoxes: React.Dispatch<React.SetStateAction<BoundingBox[]>>;
   dragEndHandler: (event: KonvaEventObject<DragEvent>) => void;
 };
 
@@ -31,13 +31,18 @@ function ImageCanvas(props: ImageCanvasProps) {
         onSelect={() => {
           setSelectedBoxID(box.id);
         }}
-        onChange={(newAtt) => {
-          const bs = boxes.slice();
-          bs[index] = newAtt;
-          props.setBoundingBoxes(bs);
+        onChange={(newBox) => {
+          props.setBoundingBoxes((previusState) => {
+            const nextState = previusState.slice();
+            nextState[index] = newBox;
+            return nextState;
+          });
         }}
         dragEndHandler={props.dragEndHandler}
         strokeColor="#dd00ff"
+        strokeWidth={2}
+        fillColor="#dd00ff"
+        opacity={0.3}
       />
     );
   });
