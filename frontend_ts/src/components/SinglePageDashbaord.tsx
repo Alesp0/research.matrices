@@ -1,10 +1,10 @@
 import { useState } from "react";
-
-import Modal from "react-bootstrap/Modal";
-import Container from "react-bootstrap/Container";
-
 import { KonvaEventObject } from "konva/lib/Node";
 
+import Container from "react-bootstrap/Container";
+import { Col, Row } from "react-bootstrap";
+
+import ErrorModal from "./ErrorModal";
 import ImageCanvas from "./ImageCanvas";
 import DocumentUploadForm from "./DocumentUploadForm";
 import DocumentStatus from "./DocumentStatus";
@@ -13,17 +13,17 @@ import {
   TextDetectionResponseData,
   BoundingBox,
 } from "../models/textDetection";
-import { Col, Row } from "react-bootstrap";
 
 function SinglePageDashboard() {
   const [isLoading, setIsLoading] = useState(false);
+
   const [error, setError] = useState<Error | undefined>(undefined);
   const [showModal, setShowModal] = useState(false);
 
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [imageFile, setImageFile] = useState(new Blob());
-  const [imageElem, setImageElem] = useState(new Image());
-  const [imageFileInfo, setImageFileInfo] = useState<{
+  const [imageElem, setImageElem] = useState<HTMLImageElement>(new Image());
+  const [imageInfo, setImageInfo] = useState<{
     name: string;
     width: number;
     height: number;
@@ -69,11 +69,12 @@ function SinglePageDashboard() {
       if (ev.target?.result) {
         const img = new Image();
         img.src = ev.target.result.toString();
+
         setIsImageLoaded(true);
 
         setImageElem(img);
         setImageFile(file);
-        setImageFileInfo({
+        setImageInfo({
           name: file.name,
           width: img.naturalWidth,
           height: img.naturalHeight,
@@ -153,12 +154,7 @@ function SinglePageDashboard() {
 
   return (
     <>
-      <Modal show={showModal} onHide={handleCloseModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Error</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>{error?.message}</Modal.Body>
-      </Modal>
+      <ErrorModal show={showModal} error={error} onHide={handleCloseModal} />
 
       <Container fluid>
         <Row className="p-3 bg-secondary text-white">
@@ -167,7 +163,7 @@ function SinglePageDashboard() {
           )}
           {isImageLoaded && (
             <DocumentStatus
-              imageName={imageFileInfo.name}
+              imageName={imageInfo.name}
               isLoading={isLoading}
               onSegmentationClick={startSegmentationHandler}
               onSendToOcrClick={sendToOCRHandler}
@@ -176,13 +172,14 @@ function SinglePageDashboard() {
           )}
         </Row>
         {isImageLoaded && (
-          <Row className="bg-primary">
+          <Row>
             <Col>
               <ImageCanvas
                 imageSrc={imageElem}
-                imageWidth={imageFileInfo.width}
-                imageHeight={imageFileInfo.height}
+                imageWidth={imageInfo.width}
+                imageHeight={imageInfo.height}
                 boundingBoxes={boundingBoxes}
+                setBoundingBoxes={setBoundingBoxes}
                 dragEndHandler={dragEndHandler}
               />
             </Col>
@@ -193,7 +190,7 @@ function SinglePageDashboard() {
               {ocrServiceResponse.length > 0 && (
                 <AnnotationList
                   annotations={ocrServiceResponse}
-                  listMaxheight={imageFileInfo.height}
+                  listMaxheight={imageInfo.height}
                 />
               )}
             </Col>
