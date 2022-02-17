@@ -62,22 +62,25 @@ function SinglePageDashboard() {
       const file = event.target.files[0];
 
       const reader = new FileReader();
-      reader.onloadend = (ev) => {
+      reader.onload = (ev) => {
         if (ev.target?.result) {
           const img = new Image();
           img.src = ev.target.result.toString();
 
-          setIsImageLoaded(true);
+          img.onload = () => {
+            setImageFile(file);
+            setImageInfo({
+              name: file.name,
+              width: img.naturalWidth,
+              height: img.naturalHeight,
+            });
+            setImageElem(img);
 
-          setImageElem(img);
-          setImageFile(file);
-          setImageInfo({
-            name: file.name,
-            width: img.naturalWidth,
-            height: img.naturalHeight,
-          });
+            setIsImageLoaded(true);
+          };
         }
       };
+
       reader.readAsDataURL(file);
     }
   };
@@ -155,8 +158,14 @@ function SinglePageDashboard() {
       <ErrorModal show={showModal} error={error} onHide={handleCloseModal} />
 
       <Container fluid>
-        <Row className="bg-secondary text-white">
-          {isImageLoaded && imageInfo && (
+        {!isImageLoaded && (
+          <Row className="mt-5 justify-content-center">
+            <DocumentUploadForm onUpload={imageUploadHandler} />
+          </Row>
+        )}
+
+        {isImageLoaded && imageInfo && (
+          <Row className="bg-secondary text-white">
             <DocumentStatus
               imageName={imageInfo.name}
               isLoading={isLoading}
@@ -164,16 +173,12 @@ function SinglePageDashboard() {
               onSendToOcrClick={sendToOCRHandler}
               segmentationData={boundingBoxes}
             />
-          )}
-        </Row>
-        {!isImageLoaded && (
-          <Row className="mt-5 justify-content-center">
-            <DocumentUploadForm onUpload={imageUploadHandler} />
           </Row>
         )}
+
         {isImageLoaded && imageElem && imageInfo && (
           <Row>
-            <Col>
+            <Col className="justify-content-center">
               <ImageCanvas
                 imageSrc={imageElem}
                 imageWidth={imageInfo.width}
@@ -183,7 +188,7 @@ function SinglePageDashboard() {
                 dragEndHandler={dragEndHandler}
               />
             </Col>
-            <Col>
+            <Col className="justify-content-center">
               {ocrServiceResponse.length === 0 && (
                 <p>Click "send to OCR" to start the prediction</p>
               )}
