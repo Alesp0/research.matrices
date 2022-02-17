@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from "uuid";
+
 class BoundingBox {
   id: string;
   height: number;
@@ -5,12 +7,12 @@ class BoundingBox {
   x: number;
   y: number;
 
-  constructor(id: string, height: number, width: number, x: number, y: number) {
-    this.id = id;
-    this.height = height;
-    this.width = width;
+  constructor(x: number, y: number, width: number, height: number) {
+    this.id = uuidv4();
     this.x = x;
     this.y = y;
+    this.width = width;
+    this.height = height;
   }
 
   static fromJson(jsonData: any) {
@@ -29,7 +31,7 @@ class BoundingBox {
     ) {
       return null;
     } else {
-      return new BoundingBox(id, height, width, x, y);
+      return new BoundingBox(x, y, width, height);
     }
   }
 }

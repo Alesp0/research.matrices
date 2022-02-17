@@ -9,6 +9,8 @@ type DocumentStatusProps = {
   isLoading: boolean;
   onSegmentationClick: () => void;
   onSendToOcrClick: () => void;
+  drawRectAllowed: boolean;
+  setDrawRectAllowed: React.Dispatch<React.SetStateAction<boolean>>;
   segmentationData?: BoundingBox[];
 };
 
@@ -20,15 +22,26 @@ function DocumentStatus(props: DocumentStatusProps) {
     boxesInfo = <div>{`segments:${boxes.length}`}</div>;
   }
 
+  const handleAllowDrawClick = () => {
+    props.setDrawRectAllowed(true);
+  };
+
   return (
     <Container>
-      <Stack gap={4} direction="horizontal">
+      <Stack gap={3} direction="horizontal">
         <div>{props.imageName}</div>
         {boxesInfo}
 
+        <Button
+          variant="primary"
+          disabled={props.drawRectAllowed}
+          onClick={handleAllowDrawClick}
+        >
+          Draw Box
+        </Button>
+
         {boxes.length === 0 && (
           <Button
-            className="ms-auto"
             variant="primary"
             disabled={props.isLoading}
             onClick={!props.isLoading ? props.onSegmentationClick : undefined}

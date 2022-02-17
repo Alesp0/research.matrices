@@ -36,11 +36,10 @@ function BoxElement(props: BoxElementProps) {
     node.scaleY(1);
     props.onChange(
       new BoundingBox(
-        props.box.id,
-        Math.max(node.height() * scaleY),
-        Math.max(5, node.width() * scaleX),
         node.x(),
-        node.y()
+        node.y(),
+        Math.max(5, node.width() * scaleX),
+        Math.max(node.height() * scaleY)
       )
     );
   };

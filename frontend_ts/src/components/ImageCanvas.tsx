@@ -10,12 +10,16 @@ type ImageCanvasProps = {
   imageWidth: number;
   imageHeight: number;
   boundingBoxes?: BoundingBox[];
+  drawRectAllowed: boolean;
+  setDrawRectAllowed: React.Dispatch<React.SetStateAction<boolean>>;
   setBoundingBoxes: React.Dispatch<React.SetStateAction<BoundingBox[]>>;
   dragEndHandler: (event: KonvaEventObject<DragEvent>) => void;
 };
 
 function ImageCanvas(props: ImageCanvasProps) {
   const [selectedBoxID, setSelectedBoxID] = useState<string | null>(null);
+
+  const [newBoxToAdd, setNewBoxToAdd] = useState<BoundingBox | null>(null);
 
   let boxes: BoundingBox[] = [];
   if (props.boundingBoxes) {
@@ -47,11 +51,59 @@ function ImageCanvas(props: ImageCanvasProps) {
     );
   });
 
-  const checkDeselect = (e: KonvaEventObject<MouseEvent>) => {
-    const clickedOnEmpty = e.target.getClassName() === "Image";
-
+  const handleMouseDown = (
+    event: KonvaEventObject<MouseEvent | TouchEvent>
+  ) => {
+    const clickedOnEmpty = event.target.getClassName() === "Image";
     if (clickedOnEmpty) {
       setSelectedBoxID(null);
+    }
+
+    if (props.drawRectAllowed) {
+      const vec2d = event.target.getStage()?.getPointerPosition();
+      if (vec2d) {
+        const { x, y } = vec2d;
+        setNewBoxToAdd(new BoundingBox(x, y, 0, 0));
+      }
+    }
+  };
+
+  const handleMouseUp = (event: KonvaEventObject<MouseEvent | TouchEvent>) => {
+    if (newBoxToAdd) {
+      const vec2d = event.target.getStage()?.getPointerPosition();
+      if (vec2d) {
+        const { x, y } = vec2d;
+        const toAdd = new BoundingBox(
+          newBoxToAdd.x,
+          newBoxToAdd.y,
+          x - newBoxToAdd.x,
+          y - newBoxToAdd.y
+        );
+        setNewBoxToAdd(null);
+        props.setBoundingBoxes((previusState) => {
+          return [...previusState, toAdd];
+        });
+      }
+    }
+    props.setDrawRectAllowed(false);
+  };
+
+  const handleMouseMove = (
+    event: KonvaEventObject<MouseEvent | TouchEvent>
+  ) => {
+    if (newBoxToAdd) {
+      const vec2d = event.target.getStage()?.getPointerPosition();
+      if (vec2d) {
+        const { x, y } = vec2d;
+        setNewBoxToAdd(
+          new BoundingBox(
+            newBoxToAdd.x,
+            newBoxToAdd.y,
+            x - newBoxToAdd.x,
+            y - newBoxToAdd.y
+          )
+        );
+      }
     }
   };
 
@@ -59,10 +111,17 @@ function ImageCanvas(props: ImageCanvasProps) {
     <Stage
       width={props.imageWidth}
       height={props.imageHeight}
-      onMouseDown={checkDeselect}
+      onMouseDown={handleMouseDown}
+      onTouchStart={handleMouseDown}
+      onMouseUp={handleMouseUp}
+      onTouchEnd={handleMouseUp}
+      onMouseMove={handleMouseMove}
+      onTouchMove={handleMouseMove}
     >
       <Layer>
         <Image image={props.imageSrc} />
+      </Layer>
+      <Layer>
         <Group>{boxElems}</Group>
       </Layer>
     </Stage>

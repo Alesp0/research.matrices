@@ -30,6 +30,8 @@ function SinglePageDashboard() {
     height: number;
   } | null>(null);
 
+  const [drawRectAllowed, setDrawRectAllowed] = useState(false);
+
   const [boundingBoxes, setBoundingBoxes] = useState<BoundingBox[]>([]);
 
   const [ocrServiceResponse, setOcrServiceResponse] = useState<string[]>([]);
@@ -43,11 +45,10 @@ function SinglePageDashboard() {
       const newState = [...previousState].map((box) => {
         if (box.id === e.target.id()) {
           return new BoundingBox(
-            box.id,
-            box.height,
-            box.width,
             e.target.x(),
-            e.target.y()
+            e.target.y(),
+            box.width,
+            box.height
           );
         } else {
           return box;
@@ -172,6 +173,8 @@ function SinglePageDashboard() {
             <DocumentStatus
               imageName={imageInfo.name}
               isLoading={isLoading}
+              drawRectAllowed={drawRectAllowed}
+              setDrawRectAllowed={setDrawRectAllowed}
               onSegmentationClick={startSegmentationHandler}
               onSendToOcrClick={sendToOCRHandler}
               segmentationData={boundingBoxes}
@@ -188,7 +191,9 @@ function SinglePageDashboard() {
                   imageWidth={imageInfo.width}
                   imageHeight={imageInfo.height}
                   boundingBoxes={boundingBoxes}
+                  drawRectAllowed={drawRectAllowed}
                   setBoundingBoxes={setBoundingBoxes}
+                  setDrawRectAllowed={setDrawRectAllowed}
                   dragEndHandler={dragEndHandler}
                 />
               </Row>
