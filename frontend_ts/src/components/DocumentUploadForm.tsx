@@ -1,5 +1,3 @@
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 
 type DocumentUploadFormProps = {
@@ -8,19 +6,10 @@ type DocumentUploadFormProps = {
 
 function DocumentUploadForm(props: DocumentUploadFormProps) {
   return (
-    <Form.Group controlId="formFile">
-      <Row>
-        <Col sm={2}>
-          <Form.Label>Upload Document</Form.Label>
-        </Col>
-        <Col sm={10}>
-          <Form.Control
-            type="file"
-            accept="image/*"
-            onChange={props.onUpload}
-          />
-        </Col>
-      </Row>
+    <Form.Group controlId="formFile" className="w-50 text-center">
+      <Form.Label>Upload Document</Form.Label>
+
+      <Form.Control type="file" accept="image/*" onChange={props.onUpload} />
     </Form.Group>
   );
 }

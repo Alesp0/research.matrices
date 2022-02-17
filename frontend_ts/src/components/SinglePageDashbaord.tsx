@@ -22,16 +22,12 @@ function SinglePageDashboard() {
 
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [imageFile, setImageFile] = useState(new Blob());
-  const [imageElem, setImageElem] = useState<HTMLImageElement>(new Image());
+  const [imageElem, setImageElem] = useState<HTMLImageElement | null>(null);
   const [imageInfo, setImageInfo] = useState<{
     name: string;
     width: number;
     height: number;
-  }>({
-    name: "",
-    width: 0,
-    height: 0,
-  });
+  } | null>(null);
 
   const [boundingBoxes, setBoundingBoxes] = useState<BoundingBox[]>([]);
 
@@ -60,28 +56,30 @@ function SinglePageDashboard() {
     });
   };
 
-  const imageUploadHandler = (event: any) => {
+  const imageUploadHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
-    const file = event.target.files[0];
+    if (event.target.files) {
+      const file = event.target.files[0];
 
-    const reader = new FileReader();
-    reader.onloadend = (ev) => {
-      if (ev.target?.result) {
-        const img = new Image();
-        img.src = ev.target.result.toString();
+      const reader = new FileReader();
+      reader.onloadend = (ev) => {
+        if (ev.target?.result) {
+          const img = new Image();
+          img.src = ev.target.result.toString();
 
-        setIsImageLoaded(true);
+          setIsImageLoaded(true);
 
-        setImageElem(img);
-        setImageFile(file);
-        setImageInfo({
-          name: file.name,
-          width: img.naturalWidth,
-          height: img.naturalHeight,
-        });
-      }
-    };
-    reader.readAsDataURL(file);
+          setImageElem(img);
+          setImageFile(file);
+          setImageInfo({
+            name: file.name,
+            width: img.naturalWidth,
+            height: img.naturalHeight,
+          });
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const startSegmentationHandler = async () => {
@@ -157,11 +155,8 @@ function SinglePageDashboard() {
       <ErrorModal show={showModal} error={error} onHide={handleCloseModal} />
 
       <Container fluid>
-        <Row className="p-3 bg-secondary text-white">
-          {!isImageLoaded && (
-            <DocumentUploadForm onUpload={imageUploadHandler} />
-          )}
-          {isImageLoaded && (
+        <Row className="bg-secondary text-white">
+          {isImageLoaded && imageInfo && (
             <DocumentStatus
               imageName={imageInfo.name}
               isLoading={isLoading}
@@ -171,7 +166,12 @@ function SinglePageDashboard() {
             />
           )}
         </Row>
-        {isImageLoaded && (
+        {!isImageLoaded && (
+          <Row className="mt-5 justify-content-center">
+            <DocumentUploadForm onUpload={imageUploadHandler} />
+          </Row>
+        )}
+        {isImageLoaded && imageElem && imageInfo && (
           <Row>
             <Col>
               <ImageCanvas
