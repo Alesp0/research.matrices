@@ -2,7 +2,8 @@ import { useState } from "react";
 import { KonvaEventObject } from "konva/lib/Node";
 
 import Container from "react-bootstrap/Container";
-import { Col, Row } from "react-bootstrap";
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
 
 import ErrorModal from "./ErrorModal";
 import ImageCanvas from "./ImageCanvas";
@@ -157,15 +158,17 @@ function SinglePageDashboard() {
     <>
       <ErrorModal show={showModal} error={error} onHide={handleCloseModal} />
 
-      <Container fluid>
-        {!isImageLoaded && (
+      {!isImageLoaded && (
+        <Container>
           <Row className="mt-5 justify-content-center">
             <DocumentUploadForm onUpload={imageUploadHandler} />
           </Row>
-        )}
+        </Container>
+      )}
 
+      <Container fluid>
         {isImageLoaded && imageInfo && (
-          <Row className="bg-secondary text-white">
+          <Row className="bg-secondary text-white pt-1 pb-1">
             <DocumentStatus
               imageName={imageInfo.name}
               isLoading={isLoading}
@@ -178,26 +181,27 @@ function SinglePageDashboard() {
 
         {isImageLoaded && imageElem && imageInfo && (
           <Row>
-            <Col className="justify-content-center">
-              <ImageCanvas
-                imageSrc={imageElem}
-                imageWidth={imageInfo.width}
-                imageHeight={imageInfo.height}
-                boundingBoxes={boundingBoxes}
-                setBoundingBoxes={setBoundingBoxes}
-                dragEndHandler={dragEndHandler}
-              />
-            </Col>
-            <Col className="justify-content-center">
-              {ocrServiceResponse.length === 0 && (
-                <p>Click "send to OCR" to start the prediction</p>
-              )}
-              {ocrServiceResponse.length > 0 && (
-                <AnnotationList
-                  annotations={ocrServiceResponse}
-                  listMaxheight={imageInfo.height}
+            <Col>
+              <Row>
+                <ImageCanvas
+                  imageSrc={imageElem}
+                  imageWidth={imageInfo.width}
+                  imageHeight={imageInfo.height}
+                  boundingBoxes={boundingBoxes}
+                  setBoundingBoxes={setBoundingBoxes}
+                  dragEndHandler={dragEndHandler}
                 />
-              )}
+              </Row>
+            </Col>
+            <Col>
+              <Row>
+                {ocrServiceResponse.length > 0 && (
+                  <AnnotationList
+                    annotations={ocrServiceResponse}
+                    listMaxheight={imageInfo.height}
+                  />
+                )}
+              </Row>
             </Col>
           </Row>
         )}

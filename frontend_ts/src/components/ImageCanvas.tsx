@@ -39,16 +39,17 @@ function ImageCanvas(props: ImageCanvasProps) {
           });
         }}
         dragEndHandler={props.dragEndHandler}
-        strokeColor="#dd00ff"
-        strokeWidth={2}
-        fillColor="#dd00ff"
+        strokeColor="#0d1680"
+        strokeWidth={4}
+        fillColor="#ab0a60"
         opacity={0.3}
       />
     );
   });
 
-  const checkDeselect = (e: KonvaEventObject<MouseEvent | TouchEvent>) => {
-    const clickedOnEmpty = e.target === e.target.getStage();
+  const checkDeselect = (e: KonvaEventObject<MouseEvent>) => {
+    const clickedOnEmpty = e.target.getClassName() === "Image";
+
     if (clickedOnEmpty) {
       setSelectedBoxID(null);
     }
@@ -59,7 +60,6 @@ function ImageCanvas(props: ImageCanvasProps) {
       width={props.imageWidth}
       height={props.imageHeight}
       onMouseDown={checkDeselect}
-      onTouchStart={checkDeselect}
     >
       <Layer>
         <Image image={props.imageSrc} />

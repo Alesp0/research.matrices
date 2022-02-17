@@ -7,9 +7,16 @@ type DocumentUploadFormProps = {
 function DocumentUploadForm(props: DocumentUploadFormProps) {
   return (
     <Form.Group controlId="formFile" className="w-50 text-center">
-      <Form.Label>Upload Document</Form.Label>
+      <Form.Label className="text-uppercase">
+        Please upload document picture
+      </Form.Label>
 
-      <Form.Control type="file" accept="image/*" onChange={props.onUpload} />
+      <Form.Control
+        size="sm"
+        type="file"
+        accept="image/*"
+        onChange={props.onUpload}
+      />
     </Form.Group>
   );
 }
