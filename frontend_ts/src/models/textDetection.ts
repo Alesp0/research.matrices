@@ -8,6 +8,13 @@ class BoundingBox {
   y: number;
 
   constructor(x: number, y: number, width: number, height: number) {
+    if (x < 0) {
+      x = 0;
+    }
+    if (y < 0) {
+      y = 0;
+    }
+
     this.id = uuidv4();
     this.x = x;
     this.y = y;

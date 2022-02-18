@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { KonvaEventObject } from "konva/lib/Node";
 
 import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
@@ -38,24 +37,6 @@ function SinglePageDashboard() {
 
   const handleCloseModal = () => {
     setShowModal(false);
-  };
-
-  const dragEndHandler = (e: KonvaEventObject<DragEvent>) => {
-    setBoundingBoxes((previousState) => {
-      const newState = [...previousState].map((box) => {
-        if (box.id === e.target.id()) {
-          return new BoundingBox(
-            e.target.x(),
-            e.target.y(),
-            box.width,
-            box.height
-          );
-        } else {
-          return box;
-        }
-      });
-      return newState;
-    });
   };
 
   const imageUploadHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -194,7 +175,6 @@ function SinglePageDashboard() {
                   drawRectAllowed={drawRectAllowed}
                   setBoundingBoxes={setBoundingBoxes}
                   setDrawRectAllowed={setDrawRectAllowed}
-                  dragEndHandler={dragEndHandler}
                 />
               </Row>
             </Col>

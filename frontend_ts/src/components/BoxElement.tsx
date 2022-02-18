@@ -6,14 +6,13 @@ import { BoundingBox } from "../models/textDetection";
 
 type BoxElementProps = {
   box: BoundingBox;
-  dragEndHandler: (event: KonvaEventObject<DragEvent>) => void;
-  strokeColor: string;
+  isSelected: boolean;
   fillColor: string;
   opacity: number;
-  strokeWidth: number;
-  isSelected: boolean;
   onSelect: () => void;
   onChange: (changedBox: BoundingBox) => void;
+  dragMoveHandler: (event: KonvaEventObject<DragEvent>) => void;
+  dragEndHandler: (event: KonvaEventObject<DragEvent>) => void;
 };
 
 function BoxElement(props: BoxElementProps) {
@@ -53,15 +52,14 @@ function BoxElement(props: BoxElementProps) {
         y={props.box.y}
         width={props.box.width}
         height={props.box.height}
-        stroke={props.strokeColor}
-        strokeWidth={props.strokeWidth}
-        onDragEnd={props.dragEndHandler}
+        fill={props.fillColor}
+        draggable={true}
+        opacity={props.opacity}
         onClick={props.onSelect}
         onTap={props.onSelect}
+        onDragMove={props.dragMoveHandler}
+        onDragEnd={props.dragEndHandler}
         onTransformEnd={transformEndHandler}
-        draggable={true}
-        fill={props.fillColor}
-        opacity={props.opacity}
       />
       {props.isSelected && (
         <Transformer

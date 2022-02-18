@@ -13,7 +13,6 @@ type ImageCanvasProps = {
   drawRectAllowed: boolean;
   setDrawRectAllowed: React.Dispatch<React.SetStateAction<boolean>>;
   setBoundingBoxes: React.Dispatch<React.SetStateAction<BoundingBox[]>>;
-  dragEndHandler: (event: KonvaEventObject<DragEvent>) => void;
 };
 
 function ImageCanvas(props: ImageCanvasProps) {
@@ -26,12 +25,48 @@ function ImageCanvas(props: ImageCanvasProps) {
     boxes = props.boundingBoxes;
   }
 
+  const dragMoveHandler = (e: KonvaEventObject<DragEvent>) => {
+    const box = e.target.getClientRect();
+    const stageSize = e.target.getStage()!.getSize();
+    const stageWidth = stageSize.width;
+    const stageHeight = stageSize.height;
+
+    if (
+      box.x < 0 ||
+      box.y < 0 ||
+      box.x + box.width > stageWidth ||
+      box.y + box.height > stageHeight
+    ) {
+      e.target.stopDrag();
+    }
+  };
+
+  const dragEndHandler = (e: KonvaEventObject<DragEvent>) => {
+    props.setBoundingBoxes((previousState) => {
+      const newState = [...previousState].map((box) => {
+        if (box.id === e.target.id()) {
+          return new BoundingBox(
+            e.target.x(),
+            e.target.y(),
+            box.width,
+            box.height
+          );
+        } else {
+          return box;
+        }
+      });
+      return newState;
+    });
+  };
+
   const boxElems = boxes.map((box, index) => {
     return (
       <BoxElement
         key={box.id}
         box={box}
         isSelected={selectedBoxID === box.id}
+        fillColor="#ab0a60"
+        opacity={0.3}
         onSelect={() => {
           setSelectedBoxID(box.id);
         }}
@@ -42,11 +77,8 @@ function ImageCanvas(props: ImageCanvasProps) {
             return nextState;
           });
         }}
-        dragEndHandler={props.dragEndHandler}
-        strokeColor="#0d1680"
-        strokeWidth={4}
-        fillColor="#ab0a60"
-        opacity={0.3}
+        dragMoveHandler={dragMoveHandler}
+        dragEndHandler={dragEndHandler}
       />
     );
   });
