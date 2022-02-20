@@ -10,14 +10,14 @@ type ImageCanvasProps = {
   imageWidth: number;
   imageHeight: number;
   boundingBoxes?: BoundingBox[];
+  selectedBoxID: string | null;
   drawRectAllowed: boolean;
+  setSelectedBoxID: React.Dispatch<React.SetStateAction<string | null>>;
   setDrawRectAllowed: React.Dispatch<React.SetStateAction<boolean>>;
   setBoundingBoxes: React.Dispatch<React.SetStateAction<BoundingBox[]>>;
 };
 
 function ImageCanvas(props: ImageCanvasProps) {
-  const [selectedBoxID, setSelectedBoxID] = useState<string | null>(null);
-
   const [newBoxToAdd, setNewBoxToAdd] = useState<BoundingBox | null>(null);
 
   let boxes: BoundingBox[] = [];
@@ -32,10 +32,10 @@ function ImageCanvas(props: ImageCanvasProps) {
     const stageHeight = stageSize.height;
 
     if (
-      box.x < 0 ||
-      box.y < 0 ||
-      box.x + box.width > stageWidth ||
-      box.y + box.height > stageHeight
+      box.x <= 0 ||
+      box.y <= 0 ||
+      box.x + box.width >= stageWidth ||
+      box.y + box.height >= stageHeight
     ) {
       e.target.stopDrag();
     }
@@ -64,11 +64,11 @@ function ImageCanvas(props: ImageCanvasProps) {
       <BoxElement
         key={box.id}
         box={box}
-        isSelected={selectedBoxID === box.id}
+        isSelected={props.selectedBoxID === box.id}
         fillColor="#ab0a60"
         opacity={0.3}
         onSelect={() => {
-          setSelectedBoxID(box.id);
+          props.setSelectedBoxID(box.id);
         }}
         onChange={(newBox) => {
           props.setBoundingBoxes((previusState) => {
@@ -88,7 +88,7 @@ function ImageCanvas(props: ImageCanvasProps) {
   ) => {
     const clickedOnEmpty = event.target.getClassName() === "Image";
     if (clickedOnEmpty) {
-      setSelectedBoxID(null);
+      props.setSelectedBoxID(null);
     }
 
     if (props.drawRectAllowed) {
@@ -105,11 +105,20 @@ function ImageCanvas(props: ImageCanvasProps) {
       const vec2d = event.target.getStage()?.getPointerPosition();
       if (vec2d) {
         const { x, y } = vec2d;
+        let newWidth = x - newBoxToAdd.x;
+        let newHeight = y - newBoxToAdd.y;
+        if (newWidth < 20) {
+          newWidth = 25;
+        }
+        if (newHeight < 14) {
+          newHeight = 16;
+        }
+
         const toAdd = new BoundingBox(
           newBoxToAdd.x,
           newBoxToAdd.y,
-          x - newBoxToAdd.x,
-          y - newBoxToAdd.y
+          newWidth,
+          newHeight
         );
         setNewBoxToAdd(null);
         props.setBoundingBoxes((previusState) => {

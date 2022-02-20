@@ -7,11 +7,13 @@ import { BoundingBox } from "../models/textDetection";
 type DocumentStatusProps = {
   imageName: string;
   isLoading: boolean;
+  drawRectAllowed: boolean;
+  segmentationData?: BoundingBox[];
+  selectedBoxID: string | null;
+  onDeleteBoxClick: () => void;
   onSegmentationClick: () => void;
   onSendToOcrClick: () => void;
-  drawRectAllowed: boolean;
   setDrawRectAllowed: React.Dispatch<React.SetStateAction<boolean>>;
-  segmentationData?: BoundingBox[];
 };
 
 function DocumentStatus(props: DocumentStatusProps) {
@@ -39,7 +41,15 @@ function DocumentStatus(props: DocumentStatusProps) {
         >
           Draw Box
         </Button>
+        <Button
+          variant="primary"
+          disabled={!Boolean(props.selectedBoxID)}
+          onClick={props.onDeleteBoxClick}
+        >
+          Delete Box
+        </Button>
 
+        <div className="vr ms-auto" />
         {boxes.length === 0 && (
           <Button
             variant="primary"
@@ -51,7 +61,6 @@ function DocumentStatus(props: DocumentStatusProps) {
         )}
         {boxes.length > 0 && (
           <Button
-            className="ms-auto"
             variant="primary"
             disabled={props.isLoading}
             onClick={!props.isLoading ? props.onSendToOcrClick : undefined}

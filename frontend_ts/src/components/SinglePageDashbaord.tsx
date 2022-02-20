@@ -32,11 +32,26 @@ function SinglePageDashboard() {
   const [drawRectAllowed, setDrawRectAllowed] = useState(false);
 
   const [boundingBoxes, setBoundingBoxes] = useState<BoundingBox[]>([]);
+  const [selectedBoxID, setSelectedBoxID] = useState<string | null>(null);
 
   const [ocrServiceResponse, setOcrServiceResponse] = useState<string[]>([]);
 
   const handleCloseModal = () => {
     setShowModal(false);
+  };
+
+  const handleDeleteBox = () => {
+    if (selectedBoxID) {
+      setBoundingBoxes((previousState) => {
+        const newState: BoundingBox[] = [];
+        for (const box of previousState) {
+          if (box.id !== selectedBoxID) {
+            newState.push(box);
+          }
+        }
+        return newState;
+      });
+    }
   };
 
   const imageUploadHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -155,7 +170,9 @@ function SinglePageDashboard() {
               imageName={imageInfo.name}
               isLoading={isLoading}
               drawRectAllowed={drawRectAllowed}
+              selectedBoxID={selectedBoxID}
               setDrawRectAllowed={setDrawRectAllowed}
+              onDeleteBoxClick={handleDeleteBox}
               onSegmentationClick={startSegmentationHandler}
               onSendToOcrClick={sendToOCRHandler}
               segmentationData={boundingBoxes}
@@ -173,6 +190,8 @@ function SinglePageDashboard() {
                   imageHeight={imageInfo.height}
                   boundingBoxes={boundingBoxes}
                   drawRectAllowed={drawRectAllowed}
+                  selectedBoxID={selectedBoxID}
+                  setSelectedBoxID={setSelectedBoxID}
                   setBoundingBoxes={setBoundingBoxes}
                   setDrawRectAllowed={setDrawRectAllowed}
                 />
