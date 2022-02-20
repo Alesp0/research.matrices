@@ -4,6 +4,7 @@ import Button from "react-bootstrap/Button";
 import InputGroup from "react-bootstrap/InputGroup";
 
 import ColorPicker from "./ColorPicker";
+import OpacitySlider from "./OpacitySlider";
 import { BoundingBox } from "../models/textDetection";
 
 type DocumentStatusProps = {
@@ -11,9 +12,11 @@ type DocumentStatusProps = {
   isLoading: boolean;
   drawRectAllowed: boolean;
   fillColor: string;
+  opacityValue: number;
   segmentationData?: BoundingBox[];
   selectedBoxID: string | null;
   handleFillColorChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleOpacityChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onDeleteBoxClick: () => void;
   onSegmentationClick: () => void;
   onSendToOcrClick: () => void;
@@ -39,10 +42,17 @@ function DocumentStatus(props: DocumentStatusProps) {
         <div className="vr" />
 
         {boxesInfo}
+
         <ColorPicker
           defaultFillColor={props.fillColor}
           handleColorChange={props.handleFillColorChange}
         />
+
+        <OpacitySlider
+          opacity={props.opacityValue}
+          handleOpacitySlider={props.handleOpacityChange}
+        />
+
         <InputGroup size="sm">
           <Button
             variant="primary"

@@ -8,6 +8,7 @@ type ColorPickerProps = {
 function ColorPicker(props: ColorPickerProps) {
   return (
     <Form.Control
+      className="w-25"
       as="input"
       type="color"
       id="colorInput"

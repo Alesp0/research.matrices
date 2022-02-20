@@ -33,6 +33,7 @@ function SinglePageDashboard() {
 
   const [drawRectAllowed, setDrawRectAllowed] = useState(false);
   const [fillColor, setFillColor] = useState("#ab0a60");
+  const [opacityValue, setOpacityValue] = useState(0.3);
 
   const [boundingBoxes, setBoundingBoxes] = useState<BoundingBox[]>([]);
   const [selectedBoxID, setSelectedBoxID] = useState<string | null>(null);
@@ -47,6 +48,10 @@ function SinglePageDashboard() {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setFillColor(event.target.value);
+  };
+
+  const handleOpacitySlider = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setOpacityValue(Number(event.target.value));
   };
 
   const handleDeleteBox = () => {
@@ -188,6 +193,8 @@ function SinglePageDashboard() {
               segmentationData={boundingBoxes}
               fillColor={fillColor}
               handleFillColorChange={handleFillColorChange}
+              opacityValue={opacityValue}
+              handleOpacityChange={handleOpacitySlider}
             />
           </Row>
         )}
@@ -202,6 +209,7 @@ function SinglePageDashboard() {
                   imageHeight={imageInfo.height}
                   boundingBoxes={boundingBoxes}
                   fillColor={fillColor}
+                  opacityValue={opacityValue}
                   drawRectAllowed={drawRectAllowed}
                   selectedBoxID={selectedBoxID}
                   setSelectedBoxID={setSelectedBoxID}
