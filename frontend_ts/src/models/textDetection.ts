@@ -6,8 +6,15 @@ class BoundingBox {
   width: number;
   x: number;
   y: number;
+  rotation: number;
 
-  constructor(x: number, y: number, width: number, height: number) {
+  constructor(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    rotation: number
+  ) {
     if (x < 0) {
       x = 0;
     }
@@ -20,6 +27,7 @@ class BoundingBox {
     this.y = y;
     this.width = width;
     this.height = height;
+    this.rotation = rotation;
   }
 
   static fromJson(jsonData: any) {
@@ -38,7 +46,7 @@ class BoundingBox {
     ) {
       return null;
     } else {
-      return new BoundingBox(x, y, width, height);
+      return new BoundingBox(x, y, width, height, 0);
     }
   }
 }

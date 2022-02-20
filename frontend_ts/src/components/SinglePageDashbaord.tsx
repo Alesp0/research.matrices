@@ -9,6 +9,7 @@ import ImageCanvas from "./ImageCanvas";
 import DocumentUploadForm from "./DocumentUploadForm";
 import DocumentStatus from "./DocumentStatus";
 import AnnotationList from "./AnnotationList";
+import AnnotationListPlaceholder from "./AnnotationListPlaceholder";
 import {
   TextDetectionResponseData,
   BoundingBox,
@@ -57,6 +58,7 @@ function SinglePageDashboard() {
             newState.push(box);
           }
         }
+        setSelectedBoxID(null);
         return newState;
       });
     }
@@ -210,6 +212,12 @@ function SinglePageDashboard() {
             </Col>
             <Col>
               <Row>
+                {ocrServiceResponse.length === 0 && (
+                  <AnnotationListPlaceholder
+                    annotationsNumber={boundingBoxes.length}
+                    listMaxheight={imageInfo.height}
+                  />
+                )}
                 {ocrServiceResponse.length > 0 && (
                   <AnnotationList
                     annotations={ocrServiceResponse}

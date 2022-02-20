@@ -63,6 +63,7 @@ function DocumentStatus(props: DocumentStatusProps) {
         <div className="vr ms-auto" />
         {boxes.length === 0 && (
           <Button
+            size="sm"
             variant="primary"
             disabled={props.isLoading}
             onClick={!props.isLoading ? props.onSegmentationClick : undefined}
@@ -72,11 +73,12 @@ function DocumentStatus(props: DocumentStatusProps) {
         )}
         {boxes.length > 0 && (
           <Button
+            size="sm"
             variant="primary"
             disabled={props.isLoading}
             onClick={!props.isLoading ? props.onSendToOcrClick : undefined}
           >
-            {props.isLoading ? "Loading..." : "Send to OCR"}
+            {props.isLoading ? "Loading..." : "Start_OCR"}
           </Button>
         )}
       </Stack>

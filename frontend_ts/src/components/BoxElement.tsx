@@ -33,12 +33,15 @@ function BoxElement(props: BoxElementProps) {
 
     node.scaleX(1);
     node.scaleY(1);
+
+    console.log(node.getAttrs());
     props.onChange(
       new BoundingBox(
         node.x(),
         node.y(),
         Math.max(5, node.width() * scaleX),
-        Math.max(node.height() * scaleY)
+        Math.max(node.height() * scaleY),
+        node.rotation()
       )
     );
   };
@@ -52,6 +55,7 @@ function BoxElement(props: BoxElementProps) {
         y={props.box.y}
         width={props.box.width}
         height={props.box.height}
+        rotation={props.box.rotation}
         fill={props.fillColor}
         draggable={true}
         opacity={props.opacity}
@@ -61,17 +65,7 @@ function BoxElement(props: BoxElementProps) {
         onDragEnd={props.dragEndHandler}
         onTransformEnd={transformEndHandler}
       />
-      {props.isSelected && (
-        <Transformer
-          ref={trRef}
-          boundBoxFunc={(oldBox, newBox) => {
-            if (newBox.width < 5 || newBox.height < 5) {
-              return oldBox;
-            }
-            return newBox;
-          }}
-        />
-      )}
+      {props.isSelected && <Transformer ref={trRef} />}
     </>
   );
 }

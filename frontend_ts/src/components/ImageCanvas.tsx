@@ -50,7 +50,8 @@ function ImageCanvas(props: ImageCanvasProps) {
             e.target.x(),
             e.target.y(),
             box.width,
-            box.height
+            box.height,
+            box.rotation
           );
         } else {
           return box;
@@ -96,7 +97,7 @@ function ImageCanvas(props: ImageCanvasProps) {
       const vec2d = event.target.getStage()?.getPointerPosition();
       if (vec2d) {
         const { x, y } = vec2d;
-        setNewBoxToAdd(new BoundingBox(x, y, 0, 0));
+        setNewBoxToAdd(new BoundingBox(x, y, 0, 0, 0));
       }
     }
   };
@@ -106,20 +107,15 @@ function ImageCanvas(props: ImageCanvasProps) {
       const vec2d = event.target.getStage()?.getPointerPosition();
       if (vec2d) {
         const { x, y } = vec2d;
-        let newWidth = x - newBoxToAdd.x;
-        let newHeight = y - newBoxToAdd.y;
-        if (newWidth < 20) {
-          newWidth = 25;
-        }
-        if (newHeight < 14) {
-          newHeight = 16;
-        }
+        const newWidth = x - newBoxToAdd.x;
+        const newHeight = y - newBoxToAdd.y;
 
         const toAdd = new BoundingBox(
           newBoxToAdd.x,
           newBoxToAdd.y,
           newWidth,
-          newHeight
+          newHeight,
+          0
         );
         setNewBoxToAdd(null);
         props.setBoundingBoxes((previusState) => {
@@ -142,7 +138,8 @@ function ImageCanvas(props: ImageCanvasProps) {
             newBoxToAdd.x,
             newBoxToAdd.y,
             x - newBoxToAdd.x,
-            y - newBoxToAdd.y
+            y - newBoxToAdd.y,
+            0
           )
         );
       }
@@ -162,8 +159,7 @@ function ImageCanvas(props: ImageCanvasProps) {
     >
       <Layer>
         <Image image={props.imageSrc} />
-      </Layer>
-      <Layer>
+
         <Group>{boxElems}</Group>
       </Layer>
     </Stage>
