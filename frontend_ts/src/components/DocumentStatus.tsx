@@ -1,6 +1,7 @@
 import Container from "react-bootstrap/Container";
 import Stack from "react-bootstrap/Stack";
 import Button from "react-bootstrap/Button";
+import InputGroup from "react-bootstrap/InputGroup";
 
 import ColorPicker from "./ColorPicker";
 import { BoundingBox } from "../models/textDetection";
@@ -42,21 +43,22 @@ function DocumentStatus(props: DocumentStatusProps) {
           defaultFillColor={props.fillColor}
           handleColorChange={props.handleFillColorChange}
         />
-
-        <Button
-          variant="primary"
-          disabled={props.drawRectAllowed}
-          onClick={handleAllowDrawClick}
-        >
-          Draw Box
-        </Button>
-        <Button
-          variant="primary"
-          disabled={!Boolean(props.selectedBoxID)}
-          onClick={props.onDeleteBoxClick}
-        >
-          Delete Box
-        </Button>
+        <InputGroup size="sm">
+          <Button
+            variant="primary"
+            disabled={props.drawRectAllowed}
+            onClick={handleAllowDrawClick}
+          >
+            Draw Box
+          </Button>
+          <Button
+            variant="primary"
+            disabled={!Boolean(props.selectedBoxID)}
+            onClick={props.onDeleteBoxClick}
+          >
+            Delete Box
+          </Button>
+        </InputGroup>
 
         <div className="vr ms-auto" />
         {boxes.length === 0 && (
