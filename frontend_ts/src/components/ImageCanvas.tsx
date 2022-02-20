@@ -82,6 +82,7 @@ function ImageCanvas(props: ImageCanvasProps) {
         }}
         dragMoveHandler={dragMoveHandler}
         dragEndHandler={dragEndHandler}
+        setSelectedBoxID={props.setSelectedBoxID}
       />
     );
   });

@@ -11,6 +11,7 @@ type BoxElementProps = {
   opacity: number;
   onSelect: () => void;
   onChange: (changedBox: BoundingBox) => void;
+  setSelectedBoxID: React.Dispatch<React.SetStateAction<string | null>>;
   dragMoveHandler: (event: KonvaEventObject<DragEvent>) => void;
   dragEndHandler: (event: KonvaEventObject<DragEvent>) => void;
 };
@@ -34,7 +35,6 @@ function BoxElement(props: BoxElementProps) {
     node.scaleX(1);
     node.scaleY(1);
 
-    console.log(node.getAttrs());
     props.onChange(
       new BoundingBox(
         node.x(),
@@ -44,6 +44,7 @@ function BoxElement(props: BoxElementProps) {
         node.rotation()
       )
     );
+    props.setSelectedBoxID(null);
   };
 
   return (
