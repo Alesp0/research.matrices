@@ -1,7 +1,7 @@
 import Form from "react-bootstrap/Form";
 
 type DocumentUploadFormProps = {
-  onUpload: (event: any) => void;
+  onUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 function DocumentUploadForm(props: DocumentUploadFormProps) {

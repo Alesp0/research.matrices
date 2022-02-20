@@ -2,14 +2,17 @@ import Container from "react-bootstrap/Container";
 import Stack from "react-bootstrap/Stack";
 import Button from "react-bootstrap/Button";
 
+import ColorPicker from "./ColorPicker";
 import { BoundingBox } from "../models/textDetection";
 
 type DocumentStatusProps = {
   imageName: string;
   isLoading: boolean;
   drawRectAllowed: boolean;
+  fillColor: string;
   segmentationData?: BoundingBox[];
   selectedBoxID: string | null;
+  handleFillColorChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onDeleteBoxClick: () => void;
   onSegmentationClick: () => void;
   onSendToOcrClick: () => void;
@@ -32,7 +35,13 @@ function DocumentStatus(props: DocumentStatusProps) {
     <Container>
       <Stack gap={3} direction="horizontal">
         <div>{props.imageName}</div>
+        <div className="vr" />
+
         {boxesInfo}
+        <ColorPicker
+          defaultFillColor={props.fillColor}
+          handleColorChange={props.handleFillColorChange}
+        />
 
         <Button
           variant="primary"

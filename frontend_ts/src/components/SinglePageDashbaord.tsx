@@ -13,6 +13,7 @@ import {
   TextDetectionResponseData,
   BoundingBox,
 } from "../models/textDetection";
+import * as React from "react";
 
 function SinglePageDashboard() {
   const [isLoading, setIsLoading] = useState(false);
@@ -30,6 +31,7 @@ function SinglePageDashboard() {
   } | null>(null);
 
   const [drawRectAllowed, setDrawRectAllowed] = useState(false);
+  const [fillColor, setFillColor] = useState("#ab0a60");
 
   const [boundingBoxes, setBoundingBoxes] = useState<BoundingBox[]>([]);
   const [selectedBoxID, setSelectedBoxID] = useState<string | null>(null);
@@ -38,6 +40,12 @@ function SinglePageDashboard() {
 
   const handleCloseModal = () => {
     setShowModal(false);
+  };
+
+  const handleFillColorChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setFillColor(event.target.value);
   };
 
   const handleDeleteBox = () => {
@@ -165,7 +173,7 @@ function SinglePageDashboard() {
 
       <Container fluid>
         {isImageLoaded && imageInfo && (
-          <Row className="bg-secondary text-white pt-1 pb-1">
+          <Row className="pt-1 pb-1">
             <DocumentStatus
               imageName={imageInfo.name}
               isLoading={isLoading}
@@ -176,6 +184,8 @@ function SinglePageDashboard() {
               onSegmentationClick={startSegmentationHandler}
               onSendToOcrClick={sendToOCRHandler}
               segmentationData={boundingBoxes}
+              fillColor={fillColor}
+              handleFillColorChange={handleFillColorChange}
             />
           </Row>
         )}
@@ -189,6 +199,7 @@ function SinglePageDashboard() {
                   imageWidth={imageInfo.width}
                   imageHeight={imageInfo.height}
                   boundingBoxes={boundingBoxes}
+                  fillColor={fillColor}
                   drawRectAllowed={drawRectAllowed}
                   selectedBoxID={selectedBoxID}
                   setSelectedBoxID={setSelectedBoxID}

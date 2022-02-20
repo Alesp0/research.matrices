@@ -10,6 +10,7 @@ type ImageCanvasProps = {
   imageWidth: number;
   imageHeight: number;
   boundingBoxes?: BoundingBox[];
+  fillColor: string;
   selectedBoxID: string | null;
   drawRectAllowed: boolean;
   setSelectedBoxID: React.Dispatch<React.SetStateAction<string | null>>;
@@ -65,7 +66,7 @@ function ImageCanvas(props: ImageCanvasProps) {
         key={box.id}
         box={box}
         isSelected={props.selectedBoxID === box.id}
-        fillColor="#ab0a60"
+        fillColor={props.fillColor}
         opacity={0.3}
         onSelect={() => {
           props.setSelectedBoxID(box.id);
