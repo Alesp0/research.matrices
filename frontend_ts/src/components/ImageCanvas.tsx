@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Stage, Layer, Image, Group } from "react-konva";
 import { KonvaEventObject } from "konva/lib/Node";
 
-import { BoundingBox } from "../models/textDetection";
+import BoundingBox from "../models/BoundingBox";
 import BoxElement from "./BoxElement";
 
 type ImageCanvasProps = {
@@ -58,7 +58,7 @@ function ImageCanvas(props: ImageCanvasProps) {
           return box;
         }
       });
-      return newState;
+      return BoundingBox.sortBoxes(newState);
     });
   };
 
@@ -77,7 +77,7 @@ function ImageCanvas(props: ImageCanvasProps) {
           props.setBoundingBoxes((previusState) => {
             const nextState = previusState.slice();
             nextState[index] = newBox;
-            return nextState;
+            return BoundingBox.sortBoxes(nextState);
           });
         }}
         dragMoveHandler={dragMoveHandler}
@@ -121,7 +121,7 @@ function ImageCanvas(props: ImageCanvasProps) {
         );
         setNewBoxToAdd(null);
         props.setBoundingBoxes((previusState) => {
-          return [...previusState, toAdd];
+          return BoundingBox.sortBoxes([...previusState, toAdd]);
         });
       }
     }

@@ -2,7 +2,7 @@ import Konva from "konva";
 import { KonvaEventObject } from "konva/lib/Node";
 import { useEffect, useRef } from "react";
 import { Rect, Transformer } from "react-konva";
-import { BoundingBox } from "../models/textDetection";
+import BoundingBox from "../models/BoundingBox";
 
 type BoxElementProps = {
   box: BoundingBox;

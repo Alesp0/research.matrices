@@ -10,11 +10,8 @@ import DocumentUploadForm from "./DocumentUploadForm";
 import DocumentStatus from "./DocumentStatus";
 import AnnotationList from "./AnnotationList";
 import AnnotationListPlaceholder from "./AnnotationListPlaceholder";
-import {
-  TextDetectionResponseData,
-  BoundingBox,
-} from "../models/textDetection";
-import * as React from "react";
+import TextDetectionResponseData from "../models/TextDetectionResponse";
+import BoundingBox from "../models/BoundingBox";
 
 function SinglePageDashboard() {
   const [isLoading, setIsLoading] = useState(false);
@@ -64,7 +61,7 @@ function SinglePageDashboard() {
           }
         }
         setSelectedBoxID(null);
-        return newState;
+        return BoundingBox.sortBoxes(newState);
       });
     }
   };
@@ -118,7 +115,7 @@ function SinglePageDashboard() {
       const data = await response.json();
       const boxesData = TextDetectionResponseData.fromJson(data);
       if (boxesData) {
-        setBoundingBoxes(boxesData.boundingBoxes);
+        setBoundingBoxes(BoundingBox.sortBoxes(boxesData.boundingBoxes));
       } else {
         throw new Error("The Response data follows an unexpected schema");
       }

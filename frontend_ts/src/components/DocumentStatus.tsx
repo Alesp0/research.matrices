@@ -5,7 +5,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 
 import ColorPicker from "./ColorPicker";
 import OpacitySlider from "./OpacitySlider";
-import { BoundingBox } from "../models/textDetection";
+import BoundingBox from "../models/BoundingBox";
 
 type DocumentStatusProps = {
   imageName: string;
