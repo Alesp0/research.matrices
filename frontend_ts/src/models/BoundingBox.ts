@@ -43,7 +43,7 @@ class BoundingBox {
       const bCenter = b.getCenter();
 
       if (aCenter.y - bCenter.y === 0) {
-        return aCenter.x - bCenter.y;
+        return aCenter.x - bCenter.x;
       } else {
         return aCenter.y - bCenter.y;
       }
@@ -67,6 +67,7 @@ class BoundingBox {
     ) {
       return null;
     } else {
+      //TODO get rotation from backend
       return new BoundingBox(x, y, width, height, 0);
     }
   }
